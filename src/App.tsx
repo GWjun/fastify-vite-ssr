@@ -1,10 +1,16 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import reactLogo from '/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 
 function App() {
   const [count, setCount] = useState(0)
+  const [isMount, setIsMount] = useState(false)
+
+  useEffect(() => {
+    setIsMount(true)
+    console.log('mount!!')
+  }, [])
 
   return (
     <>

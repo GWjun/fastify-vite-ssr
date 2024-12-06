@@ -1,9 +1,11 @@
 import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
+import { hydrateRoot } from 'react-dom/client'
 import App from './App.tsx'
 
-createRoot(document.getElementById('root')!).render(
+const rootElement = document.getElementById('root')!
+
+hydrateRoot(
+  rootElement,
   <StrictMode>
     <App />
   </StrictMode>
