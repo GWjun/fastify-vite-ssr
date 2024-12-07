@@ -4,11 +4,11 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite-node server/main.tsx --dev",
-    "start": "vite-node server/main.tsx",
+    "dev": "vite-node server/main.tsx",
+    "start": "pnpm build && cross-env NODE_ENV=production vite-node server/main.tsx",
     "build": "pnpm build:client && pnpm build:server",
     "build:client": "vite build --outDir dist/client --ssrManifest",
-    "build:server": "vite build --outDir dist/server --ssr /index.js",
+    "build:server": "vite build --outDir dist/server --ssr server/entry.tsx",
     "lint": "eslint ."
   },
   "dependencies": {
@@ -25,6 +25,7 @@
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^4.3.4",
+    "cross-env": "^7.0.3",
     "eslint": "^9.15.0",
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.14",

@@ -1,6 +1,11 @@
+import path from 'path'
 import Fastify from 'fastify'
+import fastifyStatic from '@fastify/static'
+import type { ViteDevServer } from 'vite'
 import { createServer } from 'vite'
-import fs from 'fs/promises'
+import { loadRender, loadTemplate } from './util'
+
+const isProduction = process.env.NODE_ENV === 'production'
 
 const server = Fastify({
   logger: {
@@ -9,23 +14,36 @@ const server = Fastify({
     },
   },
 })
-const vite = await createServer({
-  server: { middlewareMode: true },
-  appType: 'custom',
-})
 
-server.addHook('onRequest', (req, res, done) => {
-  vite.middlewares(req.raw, res.raw, done)
-})
+let vite: ViteDevServer | undefined
 
-server.get('*', async (req, reply) => {
+if (!isProduction) {
+  vite = await createServer({
+    server: { middlewareMode: true },
+    appType: 'custom',
+  })
+
+  server.addHook('onRequest', (req, res, done) => {
+    if (!vite) {
+      throw new Error('Vite instance is required in development mode')
+    }
+
+    vite.middlewares(req.raw, res.raw, done)
+  })
+} else {
+  server.register(fastifyStatic, {
+    root: path.resolve(__dirname, '../dist/client'),
+    prefix: '/',
+  })
+}
+
+server.setNotFoundHandler(async (req, reply) => {
   const url = req.url
   const res = reply.raw
 
-  let template = await fs.readFile('./index.html', 'utf-8')
-  template = await vite.transformIndexHtml(url, template)
+  const template = await loadTemplate(url, vite)
+  const render = await loadRender(vite)
 
-  const { render } = await vite.ssrLoadModule('./server/entry.tsx')
   const parts = template.split('<!--ssr-outlet-->')
   res.write(parts[0])
 
