@@ -1,6 +1,8 @@
 import path from 'path'
 import Fastify from 'fastify'
 import fastifyStatic from '@fastify/static'
+import fastifyCompress from '@fastify/compress'
+
 import type { ViteDevServer } from 'vite'
 import { createServer } from 'vite'
 import { loadRender, loadTemplate } from './util'
@@ -32,6 +34,8 @@ if (!isProduction) {
   })
 } else {
   // for production
+  server.register(fastifyCompress, { encodings: ['gzip'] })
+
   server.register(fastifyStatic, {
     root: path.resolve(__dirname, '../dist/client'),
     prefix: '/',
