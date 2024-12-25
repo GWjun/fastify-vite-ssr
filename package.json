@@ -4,8 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite-node server/main.tsx",
-    "start": "pnpm build && cross-env NODE_ENV=production vite-node server/main.tsx",
+    "dev": "vite-node server/main.ts",
+    "start": "pnpm build && cross-env NODE_ENV=production vite-node server/main.ts",
     "build": "pnpm build:client && pnpm build:server",
     "build:client": "vite build --outDir dist/client --ssrManifest",
     "build:server": "vite build --outDir dist/server --ssr server/entry.tsx",

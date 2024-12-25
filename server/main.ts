@@ -31,12 +31,14 @@ if (!isProduction) {
     vite.middlewares(req.raw, res.raw, done)
   })
 } else {
+  // for production
   server.register(fastifyStatic, {
     root: path.resolve(__dirname, '../dist/client'),
     prefix: '/',
   })
 }
 
+// static file not found
 server.setNotFoundHandler(async (req, reply) => {
   const url = req.url
   const res = reply.raw
