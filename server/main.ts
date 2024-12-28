@@ -1,9 +1,11 @@
+import type { FastifyReply, FastifyRequest } from 'fastify'
+import type { ViteDevServer } from 'vite'
+
 import path from 'path'
 import Fastify from 'fastify'
 import fastifyStatic from '@fastify/static'
 import fastifyCompress from '@fastify/compress'
 
-import type { ViteDevServer } from 'vite'
 import { createServer } from 'vite'
 import { createFetchRequest, loadRender, loadTemplate } from './util'
 
@@ -43,7 +45,7 @@ if (!isProduction) {
 }
 
 // serve routing page
-server.setNotFoundHandler(async (req, reply) => {
+async function handleSSR(req: FastifyRequest, reply: FastifyReply) {
   const url = req.url
   const res = reply.raw
   const fetchRequest = createFetchRequest(req, reply)
@@ -63,6 +65,16 @@ server.setNotFoundHandler(async (req, reply) => {
       res.end()
     },
   })
+}
+
+// avoid error with static serving file
+server.get('/', async (req, reply) => {
+  await handleSSR(req, reply)
+})
+
+// default route
+server.setNotFoundHandler(async (req, reply) => {
+  await handleSSR(req, reply)
 })
 
 await server.ready()

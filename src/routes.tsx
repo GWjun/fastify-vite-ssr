@@ -1,9 +1,8 @@
 import type { RouteObject } from 'react-router'
-import { lazy, Suspense } from 'react'
+import { Suspense } from 'react'
 import App from './App'
-
-const Home = lazy(() => import('#pages/Home'))
-const About = lazy(() => import('#pages/About'))
+import Home from '#pages/Home'
+import About from '#pages/About'
 
 const routes: RouteObject[] = [
   {
