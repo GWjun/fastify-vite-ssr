@@ -2,18 +2,30 @@ import {
   renderToPipeableStream,
   RenderToPipeableStreamOptions,
 } from 'react-dom/server'
-import { StaticRouter } from 'react-router-dom/server'
-import App from '../src/App'
+import {
+  createStaticHandler,
+  createStaticRouter,
+  StaticRouterProvider,
+} from 'react-router'
+import routes from '../src/routes'
+
+const { query, dataRoutes } = createStaticHandler(routes)
 
 export const render = async (
-  url: string,
-  options: RenderToPipeableStreamOptions
+  req: Request,
+  options: RenderToPipeableStreamOptions,
 ) => {
+  const context = await query(req)
+
+  if (context instanceof Response) {
+    return context
+  }
+
+  const router = createStaticRouter(dataRoutes, context)
+
   const stream = renderToPipeableStream(
-    <StaticRouter location={url}>
-      <App />
-    </StaticRouter>,
-    options
+    <StaticRouterProvider router={router} context={context} />,
+    options,
   )
 
   return { stream }

@@ -5,7 +5,7 @@ import fastifyCompress from '@fastify/compress'
 
 import type { ViteDevServer } from 'vite'
 import { createServer } from 'vite'
-import { loadRender, loadTemplate } from './util'
+import { createFetchRequest, loadRender, loadTemplate } from './util'
 
 const isProduction = process.env.NODE_ENV === 'production'
 
@@ -42,10 +42,11 @@ if (!isProduction) {
   })
 }
 
-// static file not found
+// serve routing page
 server.setNotFoundHandler(async (req, reply) => {
   const url = req.url
   const res = reply.raw
+  const fetchRequest = createFetchRequest(req, reply)
 
   const template = await loadTemplate(url, vite)
   const render = await loadRender(vite)
@@ -53,7 +54,7 @@ server.setNotFoundHandler(async (req, reply) => {
   const parts = template.split('<!--ssr-outlet-->')
   res.write(parts[0])
 
-  const { stream } = await render(url, {
+  const { stream } = await render(fetchRequest, {
     onShellReady() {
       stream.pipe(res)
     },

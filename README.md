@@ -54,3 +54,10 @@ pnpm install
     └── util.ts          # Utility function file
 
 ```
+
+</br>
+
+## Reference
+
+- https://vite.dev/guide/ssr
+- https://reactrouter.com/start/framework/custom
