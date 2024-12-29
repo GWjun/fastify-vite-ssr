@@ -4,9 +4,14 @@ import App from './App'
 import Home from '#pages/Home'
 import About from '#pages/About'
 
+export const PATH = {
+  home: '/',
+  about: 'about',
+}
+
 const routes: RouteObject[] = [
   {
-    path: '/',
+    path: PATH.home,
     element: (
       <Suspense>
         <App />
@@ -16,11 +21,15 @@ const routes: RouteObject[] = [
       {
         index: true,
         element: <Home />,
+        loader: async () => {
+          // server side code
+          return fetch(`https://jsonplaceholder.typicode.com/todos`)
+        },
       },
       {
         children: [
           {
-            path: '/about',
+            path: PATH.about,
             element: <About />,
           },
         ],
